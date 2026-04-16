@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+
+<h1>Profil de {{ user.username }}</h1>
+
+{% if user.bio %}
+    <p>{{ user.bio }}</p>
+{% endif %}
+
+<hr>
+
+<h2>Ses posts</h2>
+
+{% for post in user.posts %}
+    <h3>{{ post.author.username }}</h3>
+    <div class="post">
+        <p>{{ post.content }}</p>
+        <small>{{ post.createdAt|date('d/m/Y H:i') }}</small>
+
+    </div>
+{% else %}
+    <p>Aucun post</p>
+{% endfor %}
+
+{% endblock %}

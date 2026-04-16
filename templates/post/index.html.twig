@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau post{% endblock %}
+
+{% block body %}
+
+<h1>Créer un post</h1>
+
+<form method="POST">
+    <textarea name="content" rows="5" style="width:100%;" placeholder="Exprime-toi..."></textarea>
+
+    <br><br>
+
+    <button type="submit">Publier</button>
+</form>
+
+{% endblock %}
