@@ -11,11 +11,17 @@
             background: #f5f6fa;
         }
 
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #216dd8;
+        }
         nav {
             background: #2f3640;
             padding: 15px;
+            display: flex;
+            justify-content: space-between;
         }
-
         nav a {
             color: white;
             margin-right: 15px;
@@ -54,9 +60,13 @@
 <body>
 
 <nav>
-    <a href="{{ path('app_home') }}">Accueil</a>
-    <a href="{{ path('app_post_new') }}">Nouveau post</a>
-    <a href="{{ path('app_profile', {'username': 'testuser'}) }}">Profil</a>
+    <a class="logo" href="{{ path('app_home') }}">SymfoConnect</a>
+    <div>
+        <a href="{{ path('app_home') }}">Accueil</a>
+        <a href="{{ path('app_post_new') }}">Nouveau post</a>
+        <a href="{{ path('app_profile', {'username': 'testuser'}) }}">Profil</a>
+    </div>
+   
 </nav>
 
 <div class="container">
