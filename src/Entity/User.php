@@ -9,7 +9,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+
+#[ApiResource()]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -64,11 +68,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
     private Collection $followers;
 
+    /**
+     * @var Collection<int, Post>
+     */
+    #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'likedBy')]
+    private Collection $likedPosts;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->following = new ArrayCollection();
         $this->followers = new ArrayCollection();
+        $this->likedPosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -278,6 +289,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $follower->removeFollowing($this);
         }
 
+        return $this;
+    }
+
+    /** @return Collection<int, Post> */
+    public function getLikedPosts(): Collection { return $this->likedPosts; }
+
+    public function addLikedPost(Post $post): static
+    {
+        if (!$this->likedPosts->contains($post)) {
+            $this->likedPosts->add($post);
+            $post->addLikedBy($this);
+        }
+        return $this;
+    }
+
+    public function removeLikedPost(Post $post): static
+    {
+        if ($this->likedPosts->removeElement($post)) {
+            $post->removeLikedBy($this);
+        }
         return $this;
     }
 }

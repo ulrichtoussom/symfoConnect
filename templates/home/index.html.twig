@@ -1,25 +1,39 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Accueil{% endblock %}
-
+{% block title %}Accueil — SymfoConnect{% endblock %}
 {% block body %}
 
-<h1>Derniers posts</h1>
-
-{% for post in posts %}
-    <div class="post">
-        <p>{{ post.content }}</p>
-
-        <small>
-            Par 
-            <a href="{{ path('app_profile', {username: post.author.username}) }}">
-                {{ post.author.username }}
-            </a>
-            le {{ post.createdAt|date('d/m/Y H:i') }}
-        </small>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-white">Explorer</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Les dernières publications de la communauté</p>
     </div>
-{% else %}
-    <p>Aucun post pour le moment.</p>
-{% endfor %}
+    {% if app.user %}
+        <a href="{{ path('app_post_new') }}" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-full transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            Nouveau post
+        </a>
+    {% endif %}
+</div>
+
+{% if not app.user %}
+    <div class="bg-gradient-to-r from-indigo-900/40 to-violet-900/40 border border-indigo-800/50 rounded-2xl p-6 mb-6 text-center">
+        <p class="text-slate-300 text-sm mb-3">Rejoins SymfoConnect pour interagir avec la communauté</p>
+        <div class="flex items-center justify-center gap-3">
+            <a href="{{ path('app_register') }}" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-full transition-colors">Créer un compte</a>
+            <a href="{{ path('app_login') }}" class="px-5 py-2 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-sm font-medium rounded-full transition-colors">Se connecter</a>
+        </div>
+    </div>
+{% endif %}
+
+<div class="flex flex-col gap-3">
+    {% for post in posts %}
+        {{ include('partials/_post_card.html.twig') }}
+    {% else %}
+        <div class="text-center py-20 text-slate-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>
+            <p class="text-lg font-medium">Aucun post pour le moment</p>
+        </div>
+    {% endfor %}
+</div>
 
 {% endblock %}

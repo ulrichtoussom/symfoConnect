@@ -22,7 +22,6 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/show.html.twig', [
             'user' => $user,
-            'username' => 'testuser', // à remplacer par app.user.username quand l'authentification sera en place
         ]);
     }
 }

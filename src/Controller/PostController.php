@@ -26,13 +26,9 @@ class PostController extends AbstractController
                 return $this->redirectToRoute('app_post_new');
             }
 
-            // ⚠️ utilisateur simulé (id=1)
-            $user = $userRepository->find(1);
-            /* $user = $userRepository->findOneBy([]);
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            $user = $this->getUser();
 
-            if (!$user) {
-                throw new \Exception('Aucun utilisateur trouvé en base');
-            } */
             $post = new Post();
             $post->setContent($content);
             $post->setCreatedAt(new \DateTimeImmutable());
