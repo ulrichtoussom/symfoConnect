@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Messenger\NewMessageEmail;
 use App\Repository\MessageRepository;
@@ -79,6 +80,14 @@ class MessageController extends AbstractController
                     ->setContent($content);
 
                 $em->persist($message);
+
+                // Notification pour le destinataire
+                $notification = (new Notification())
+                    ->setRecipient($partner)
+                    ->setSender($currentUser)
+                    ->setType(Notification::TYPE_MESSAGE);
+                $em->persist($notification);
+
                 $em->flush();
 
                 // Email asynchrone via Messenger
