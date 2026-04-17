@@ -58,3 +58,42 @@ avec 4 different different services
 - Database MYSQL 
 - phpmyadmin qui nous donne un cadre visuel mon la gestion de notre base de donnee 
 - mailler 
+
+
+# Implementer l authentification avec symfony 
+
+    installation du module de securite 
+    - composer require symfony/security-bundle 
+
+    Creation de formulaire login 
+    - symfony console make:security:form-login 
+
+    Creation de formulaire register 
+    - symfony console make:registration-form 
+
+Notion de Group symfony pour les requetes 
+- serializer symfony necessaire 
+
+Filtrer des routes a partir ses proprietés 
+
+
+**Utilisation de jwt pour securiser nos routes**
+
+installation du module JWT 
+ - composer require lexik/jwt-authentication-bundle
+Generation des key private 
+
+
+**Ajouter manuellement  dans routes.yaml** 
+
+api_login_check:
+    path: /api/login_check
+
+**Ajouter manuellement dans security.yaml**
+
+api:
+    pattern: ^/api/
+    stateless: true
+    provider: app_user_provider
+    # https://symfony.com/doc/current/security.html#http-basic-authentication
+    jwt: ~

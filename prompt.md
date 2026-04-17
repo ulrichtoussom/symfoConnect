@@ -380,3 +380,21 @@ Log(Application de Migration)
 
                                                                                                                 
     [OK] Already at the latest version ("DoctrineMigrations\Version20260415143222") 
+
+
+
+    Pour la conception de notre resocial, j aimerai pour ajouter un systeme ce follower ( un utilsateur a 1 ou plusieur follower et un u utilisateur peut follow une ou plusieur personnne)
+    - conceptiontellement comment est ce que je peux mettre cela en place 
+
+
+    Nous allons Pousuivre avec le developpement de notre application symfoconnect connect notamment les modification du jour 2 a apporter a notre de base de code celui du jour 1
+    peux tu deja me rappeller ce que l on fait au jour 1 question de verifier si nous effectivement sur la longueur d onde 
+
+    Passons au jour 2 
+
+
+    Lors de l etape de registration, j'ai une erreur de An exception occurred while executing a query: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'username' cannot be null
+    j image que c est du au fait que se champs n est pas nullable en bd , 
+    @src/contoller/RegistrationController.php verifie de fichier  qui et le controle de enregistrement et d autre fichier eventuellement et propose moi des solution pour ressoudre ce probleme 
+
+    Je suis tres sastifait du resultat que tu ma produit pour ce jour 2 . Mais de mes objectif princiaux c'est de comprendre reellement comment mettre sur pieds se type de systeme
