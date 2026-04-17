@@ -19,39 +19,63 @@
 </div>
 
 {# Historique #}
-<div class="flex flex-col gap-3 mb-6 max-h-[60vh] overflow-y-auto pr-1" id="messages-container">
+<div class="flex flex-col gap-2 mb-6 max-h-[60vh] overflow-y-auto px-1" id="messages-container">
     {% if messages is empty %}
         <p class="text-center text-slate-600 text-sm py-10">Commence la conversation !</p>
     {% else %}
+        {% set prevDate = null %}
         {% for message in messages %}
             {% set isMe = message.sender == app.user %}
-            <div class="flex {{ isMe ? 'justify-end' : 'justify-start' }} gap-2">
+            {% set msgDate = message.createdAt|date('d/m/Y') %}
+
+            {# Séparateur de date #}
+            {% if msgDate != prevDate %}
+                <div class="flex items-center gap-3 my-3">
+                    <div class="flex-1 h-px bg-slate-800"></div>
+                    <span class="text-slate-600 text-xs px-2">{{ msgDate == "now"|date('d/m/Y') ? "Aujourd'hui" : msgDate }}</span>
+                    <div class="flex-1 h-px bg-slate-800"></div>
+                </div>
+                {% set prevDate = msgDate %}
+            {% endif %}
+
+            <div class="flex {{ isMe ? 'justify-end' : 'justify-start' }} items-end gap-2">
+
+                {# Avatar partenaire à gauche #}
                 {% if not isMe %}
-                    <div class="w-8 h-8 rounded-full avatar-{{ message.sender.username|slice(0,1)|lower }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0 self-end">
+                    <div class="w-7 h-7 rounded-full avatar-{{ message.sender.username|slice(0,1)|lower }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                         {{ message.sender.username|slice(0,1)|upper }}
                     </div>
                 {% endif %}
-                <div class="max-w-[70%]">
-                    <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed
-                        {{ isMe
-                            ? 'bg-indigo-600 text-white rounded-br-sm'
-                            : 'bg-slate-800 text-slate-200 rounded-bl-sm' }}">
+
+                <div class="max-w-[68%] flex flex-col {{ isMe ? 'items-end' : 'items-start' }}">
+                    <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words
+                        {% if isMe %}
+                            bg-indigo-600 text-white rounded-br-none
+                        {% else %}
+                            bg-slate-700 text-slate-100 rounded-bl-none
+                        {% endif %}">
                         {{ message.content }}
                     </div>
-                    <time class="text-slate-600 text-xs mt-1 block {{ isMe ? 'text-right' : 'text-left' }}">
+                    <time class="text-slate-600 text-[11px] mt-1 px-1">
                         {{ message.createdAt|date('H:i') }}
                     </time>
                 </div>
+
+                {# Petit triangle indicateur côté moi #}
+                {% if isMe %}
+                    <div class="w-7 h-7 flex-shrink-0"></div>
+                {% endif %}
+
             </div>
         {% endfor %}
     {% endif %}
 </div>
 
 {# Formulaire d'envoi #}
-<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-3">
     <form method="POST" class="flex items-end gap-3">
-        <textarea name="content" rows="2" placeholder="Ton message..."
-            class="flex-1 bg-transparent text-white placeholder-slate-600 text-sm leading-relaxed resize-none outline-none"
+        <textarea name="content" rows="2" placeholder="Écris un message..."
+            class="flex-1 bg-transparent text-white placeholder-slate-600 text-sm leading-relaxed resize-none outline-none py-1"
             onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.form.submit();}"
         ></textarea>
         <button type="submit"
@@ -62,7 +86,6 @@
 </div>
 
 <script>
-    // Scroller en bas à l'ouverture
     const c = document.getElementById('messages-container');
     if (c) c.scrollTop = c.scrollHeight;
 </script>
