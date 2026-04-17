@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+{% block title %}Conversation avec {{ partner.username }} — SymfoConnect{% endblock %}
+{% block body %}
+
+{# En-tête #}
+<div class="flex items-center gap-3 mb-6">
+    <a href="{{ path('app_messages_index') }}" class="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <a href="{{ path('app_profile', {username: partner.username}) }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <div class="w-10 h-10 rounded-full avatar-{{ partner.username|slice(0,1)|lower }} flex items-center justify-center text-white font-bold text-sm">
+            {{ partner.username|slice(0,1)|upper }}
+        </div>
+        <div>
+            <p class="font-semibold text-white text-sm leading-none">{{ partner.username }}</p>
+            <p class="text-slate-500 text-xs mt-0.5">Voir le profil</p>
+        </div>
+    </a>
+</div>
+
+{# Historique #}
+<div class="flex flex-col gap-3 mb-6 max-h-[60vh] overflow-y-auto pr-1" id="messages-container">
+    {% if messages is empty %}
+        <p class="text-center text-slate-600 text-sm py-10">Commence la conversation !</p>
+    {% else %}
+        {% for message in messages %}
+            {% set isMe = message.sender == app.user %}
+            <div class="flex {{ isMe ? 'justify-end' : 'justify-start' }} gap-2">
+                {% if not isMe %}
+                    <div class="w-8 h-8 rounded-full avatar-{{ message.sender.username|slice(0,1)|lower }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0 self-end">
+                        {{ message.sender.username|slice(0,1)|upper }}
+                    </div>
+                {% endif %}
+                <div class="max-w-[70%]">
+                    <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed
+                        {{ isMe
+                            ? 'bg-indigo-600 text-white rounded-br-sm'
+                            : 'bg-slate-800 text-slate-200 rounded-bl-sm' }}">
+                        {{ message.content }}
+                    </div>
+                    <time class="text-slate-600 text-xs mt-1 block {{ isMe ? 'text-right' : 'text-left' }}">
+                        {{ message.createdAt|date('H:i') }}
+                    </time>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{# Formulaire d'envoi #}
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+    <form method="POST" class="flex items-end gap-3">
+        <textarea name="content" rows="2" placeholder="Ton message..."
+            class="flex-1 bg-transparent text-white placeholder-slate-600 text-sm leading-relaxed resize-none outline-none"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.form.submit();}"
+        ></textarea>
+        <button type="submit"
+            class="flex-shrink-0 p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+        </button>
+    </form>
+</div>
+
+<script>
+    // Scroller en bas à l'ouverture
+    const c = document.getElementById('messages-container');
+    if (c) c.scrollTop = c.scrollHeight;
+</script>
+
+{% endblock %}

@@ -3,42 +3,49 @@
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Repository\UserRepository;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class PostController extends AbstractController
 {
-    #[Route('/post/nouveau', name: 'app_post_new')]
-    public function new(
-        Request $request,
-        EntityManagerInterface $em,
-        UserRepository $userRepository
-    ): Response {
-        if ($request->isMethod('POST')) {
-            $content = $request->request->get('content');
+    public function __construct(private readonly TagAwareCacheInterface $cache) {}
 
-            if (!$content || strlen($content) < 5) {
+    #[Route('/post/nouveau', name: 'app_post_new')]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        if ($request->isMethod('POST')) {
+            $content = trim((string) $request->request->get('content', ''));
+
+            if (strlen($content) < 5) {
                 $this->addFlash('error', 'Le contenu doit faire au moins 5 caractères');
                 return $this->redirectToRoute('app_post_new');
             }
 
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            /** @var User $user */
             $user = $this->getUser();
 
-            $post = new Post();
-            $post->setContent($content);
-            $post->setCreatedAt(new \DateTimeImmutable());
-            $post->setAuthor($user);
+            $post = (new Post())
+                ->setContent($content)
+                ->setAuthor($user);
 
             $em->persist($post);
             $em->flush();
 
-            $this->addFlash('success', 'Post créé avec succès');
+            // Invalider le cache des feeds des abonnés
+            $tags = ['feed'];
+            foreach ($user->getFollowers() as $follower) {
+                $tags[] = 'feed_user_' . $follower->getId();
+            }
+            $this->cache->invalidateTags($tags);
 
+            $this->addFlash('success', 'Post créé avec succès !');
             return $this->redirectToRoute('app_home');
         }
 
