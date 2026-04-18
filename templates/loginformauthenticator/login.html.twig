@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block title %}Connexion — SymfoConnect{% endblock %}
+{% block body %}
+<div class="min-h-[80vh] flex items-center justify-center">
+    <div class="w-full max-w-sm">
+        <div class="text-center mb-8">
+            <span class="text-4xl">⚡</span>
+            <h1 class="text-2xl font-bold text-white mt-2">SymfoConnect</h1>
+            <p class="text-slate-500 text-sm mt-1">Bon retour parmi nous</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+            {% if error %}
+                <div class="flex items-center gap-2.5 bg-red-950/60 border border-red-800/60 text-red-400 px-4 py-3 rounded-xl mb-5 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+            <form method="post" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Adresse email</label>
+                    <input type="email" value="{{ last_username }}" name="_username" id="username"
+                        class="w-full bg-slate-800/60 border border-slate-700 hover:border-slate-600 focus:border-indigo-500 text-white placeholder-slate-600 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                        autocomplete="email" placeholder="alice@example.com" required autofocus>
+                </div>
+                <div>
+                    <label for="password" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Mot de passe</label>
+                    <input type="password" name="_password" id="password"
+                        class="w-full bg-slate-800/60 border border-slate-700 hover:border-slate-600 focus:border-indigo-500 text-white placeholder-slate-600 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                        autocomplete="current-password" placeholder="••••••••" required>
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors mt-2">Se connecter</button>
+            </form>
+        </div>
+        <p class="text-center text-slate-600 text-sm mt-5">
+            Pas encore de compte ?
+            <a href="{{ path('app_register') }}" class="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">S'inscrire gratuitement</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
